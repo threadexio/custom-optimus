@@ -1,0 +1,10 @@
+[Unit]
+Description=Turn off the GPU at boot
+After=systemd-modules-load.service
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/sh -c "tee /proc/acpi/bbswitch <<< OFF"
+
+[Install]
+WantedBy=multi-user.target
