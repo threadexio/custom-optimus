@@ -35,26 +35,26 @@ Well, at first I though optimus-manager was THE way for Arch laptops, but I didn
 
 ## Finally the installation...
 <ol>
-<li>Install the required dependencies: `sudo pacman -S bbswitch nvidia nvidia-prime`</li>
+<li>Install the required dependencies: <code>sudo pacman -S bbswitch nvidia nvidia-prime</code></li>
 <ul>
 <li>Nvidia drivers (nvidia package)</li>
 <li>Nvidia PRIME (nvidia-prime package)</li>
 <li>bbswitch (bbswitch package)</li>
 </ul>
 <li>Clone this repository somewhere on your system, doesn't really matter... just make sure you remember where</li>
-```git clone https://github.com/threadexio/custom-optimus````
-<li>Run the `install.sh` script as root. If you care about your don't like running unknown scripts as root, you can perform a manual install:</li>
-```
+  <pre><code>git clone https://github.com/threadexio/custom-optimus</code></pre>
+<li>Run the <code>install.sh</code> script as root. If you care about your don't like running unknown scripts as root, you can perform a manual install:</li>
+<pre><code>
 sudo chown root:root optimus.service
 sudo chmod 644 optimus.service
 sudo cp optimus.service /etc/systemd/system (or wherever you like to keep services)
 (DON'T ENABLE, START, MASK the service)
 sudo pacman -S bbswitch nvidia-prime
 echo 'bbswitch' > /etc/modules-load.d/bbswitch.conf
-```
-<li>Edit parts of the `optimus.sh` script to fit your hardware and config</li>
+  </code></pre>
+<li>Edit parts of the <code>optimus.sh</code> script to fit your hardware and config</li>
 <ul>
-<li>Line 3: Set `displaymng` to your display manager (gdm, sddm, lightdm, kdm, etc)</li>
+<li>Line 3: Set <code>displaymng</code> to your display manager (gdm, sddm, lightdm, kdm, etc)</li>
 <li>Line 4: The path to the X11 config file that will be created.</li>
 <li>Line 69 (nice): This is the configuration for X11 to know how to use the dGPU, most likely you'll have to change this</li>
 <li>Line 79: Add more modules options here if needed (usually none are needed)</li>
@@ -66,17 +66,17 @@ echo 'bbswitch' > /etc/modules-load.d/bbswitch.conf
 
 ## Known issues:
 <ul>
-<li>Graphical artifacts in X11:
-If you encounter any of these, including black bars, weird shapes and more, just switch to the any TTY with Ctrl + Alt + F1-12 and restart your display manager
+<li>Graphical artifacts in X11:</li>
+<pre>If you encounter any of these, including black bars, weird shapes and more, just switch to the any TTY with Ctrl + Alt + F1-12 and restart your display manager</pre>
 <li>Desktop Effects not working:</li>
-Desktop effects might get disabled when switching GPUs, if that happens just restart your compositor (it worked for me in Plasma w/ OpenGL 2.0)
+<pre>Desktop effects might get disabled when switching GPUs, if that happens just restart your compositor (it worked for me in Plasma w/ OpenGL 2.0)</pre>
 </ul>
 
 ## Some more notes
 <ul>
 <li>Tested on a Lenovo Legion Y-720</li>
 <li>Linux legion 5.9.14-arch1-1 #1 SMP PREEMPT Sat, 12 Dec 2020 14:37:12 +0000 x86_64 GNU/Linux</li>
-<li>Nvidia Driver version: `455.45.01`</li>
+<li>Nvidia Driver version: <code>455.45.01</code></li>
 <li>DE: KDE Plasma 5.20.4</li>
 <li>Display Manager: SDDM w/ default config
 </ul>
