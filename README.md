@@ -43,15 +43,7 @@ Well, at first I though optimus-manager was THE way for Arch laptops, but I didn
 </ul>
 <li>Clone this repository somewhere on your system, doesn't really matter... just make sure you remember where</li>
   <pre><code>git clone https://github.com/threadexio/custom-optimus</code></pre>
-<li>Run the <code>install.sh</code> script as root. If you care about your don't like running unknown scripts as root, you can perform a manual install:</li>
-<pre><code>
-sudo chown root:root optimus.service
-sudo chmod 644 optimus.service
-sudo cp optimus.service /etc/systemd/system (or wherever you like to keep services)
-(DON'T ENABLE, START, MASK the service)
-sudo pacman -S bbswitch nvidia-prime
-echo 'bbswitch' > /etc/modules-load.d/bbswitch.conf
-  </code></pre>
+<li>Run the <code>install.sh</code> script and it will guide you</li>
 <li>Edit parts of the <code>optimus.sh</code> script to fit your hardware and config</li>
 <ul>
 <li>Line 3: Set <code>displaymng</code> to your display manager (gdm, sddm, lightdm, kdm, etc)</li>
@@ -60,7 +52,7 @@ echo 'bbswitch' > /etc/modules-load.d/bbswitch.conf
 <li>Line 79: Add more modules options here if needed (usually none are needed)</li>
 </ul>
 <li>After completing all that, do a quick reboot to ensure everything is loaded and ready to go.</li>
-<li>If you have done all, without errors, it should all work just run the script and choose which GPU you want to use
+<li>If you have done all, without errors, it should all work just run <code>optimus</code> from your terminal and choose which GPU you want to use
 **NOTE:** Before switching the GPU, save all of your work (documents, etc) because although you don't have to reboot, restarting X will also kills the current session
 </ol>
 
