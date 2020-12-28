@@ -41,15 +41,13 @@ Well, at first I though optimus-manager was THE way for Arch laptops, but I didn
 <li>Nvidia PRIME (nvidia-prime package)</li>
 <li>bbswitch (bbswitch package)</li>
 </ul>
-<li>Clone this repository somewhere on your system, doesn't really matter... just make sure you remember where</li>
+<li>Clone this repository somewhere on your system, doesn't really matter where... just make sure you remember the location (not in /tmp)</li>
   <pre><code>git clone https://github.com/threadexio/custom-optimus</code></pre>
 <li>Run the <code>install.sh</code> script and it will guide you</li>
 <li>Edit parts of the <code>optimus.sh</code> script to fit your hardware and config</li>
 <ul>
-<li>Line 3: Set <code>displaymng</code> to your display manager (gdm, sddm, lightdm, kdm, etc)</li>
-<li>Line 4: The path to the X11 config file that will be created.</li>
-<li>Line 69 (nice): This is the configuration for X11 to know how to use the dGPU, most likely you'll have to change this</li>
-<li>Line 79: Add more modules options here if needed (usually none are needed)</li>
+<li>Line 69 (nice): This is the configuration for X11 to know how to use the dGPU, you may have to change this</li>
+<li>(Optional) Line 79: Add more modules options here if needed (usually none are needed)</li>
 </ul>
 <li>After completing all that, do a quick reboot to ensure everything is loaded and ready to go.</li>
 <li>If you have done all, without errors, it should all work just run <code>optimus</code> from your terminal and choose which GPU you want to use
