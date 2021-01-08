@@ -1,7 +1,5 @@
 #!/usr/bin/bash
 
-set -e
-
 confpath='CONFIGURATION_PATH'
 
 # Check if we are running as root
