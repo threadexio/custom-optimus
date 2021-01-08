@@ -2,7 +2,7 @@
 
 confpath='CONFIGURATION_PATH'
 
-if [[ $(id -u) != '0' ]]; then
+if [[ $EUID != '0' ]]; then
 	echo "Run $0 with root permissions to continue"
 	exit 1
 fi
