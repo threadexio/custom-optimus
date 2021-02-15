@@ -51,10 +51,13 @@ blacklist nvidia_drm
 EOF
 
 	# Unload the nvidia drivers
-	modprobe -r nvidia_drm
-	modprobe -r nvidia_modeset
-	modprobe -r nvidia
-	sleep 5
+	while [[ ! -z "$(lsmod | grep nvidia)" ]]; do
+		modprobe -r nvidia_drm
+		modprobe -r nvidia_modeset
+		modprobe -r nvidia
+		sleep 1
+	done
+
 
 	# Power off the card
 	tee /proc/acpi/bbswitch <<< OFF
@@ -100,10 +103,12 @@ EOF
 	sleep 1
 
 	# Load the drivers
-	modprobe nvidia_drm
-	modprobe nvidia_modeset
-	modprobe nvidia "NVreg_DynamicPowerManagement=0x02"
-	sleep 5
+	while [[ -z "$(lsmod | grep nvidia)" ]]; do
+		modprobe nvidia_drm
+		modprobe nvidia_modeset
+		modprobe nvidia
+		sleep 1
+	done
 
 	# Don't disable the GPU on boot
 	systemctl disable optimus.service
