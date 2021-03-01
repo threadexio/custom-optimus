@@ -8,14 +8,7 @@ if [[ $EUID != '0' ]]; then
 	exit 1
 fi
 
-printf "What display manager do you use? "
-read displaymng
-
-systemctl status $displaymng &>/dev/null
-if [[ $? -eq 4 ]]; then
-	echo "Display manager $displaymng could not be found. Are you sure this is your display manager?"
-	exit 1
-fi
+displaymng=$(basename $(readlink $servicepath/display-manager.service) .service)
 
 printf "\nThis installer will:\n\tAdd a service in systemd\n\tCreate a config file in $confpath\n\tCopy optimus.sh to /usr/bin/optimus\n\nContinue? [Y/n] "
 read a
@@ -77,5 +70,5 @@ chown 754 /usr/bin/optimus
 # Set bbswitch to load on boot
 tee /etc/modules-load.d/bbswitch.conf <<< 'bbswitch' &>/dev/null
 echo "-----------------------------------------------------------------------------------------------------"
-echo "Installation finished! A reboot is recommended before you are able to use this script, sorry for that..."
+echo "Installation finished! A reboot is recommended just to make sure, sorry for that..."
 echo "-----------------------------------------------------------------------------------------------------"
