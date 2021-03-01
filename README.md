@@ -77,7 +77,7 @@ Well, at first I though optimus-manager was THE way for Arch laptops, but I didn
 
 </ol>
 
-**NOTE:** Before switching the GPU, save all of your work because although you don't have to reboot, restarting X will also kills the current session along with the open apps
+**NOTE:** Before switching the GPU, save all of your work because although you don't have to reboot, restarting X also kills the current session along with the open apps
 
 ## Known issues:
 <ul>
