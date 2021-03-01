@@ -11,7 +11,7 @@ fi
 if [[ -f $confpath ]]; then
 	source $confpath
 else
-	echo "Could not find the config file at $confpath. Cannot"
+	echo "Could not find the config file at $confpath. Cannot continue"
 	exit 1
 fi
 

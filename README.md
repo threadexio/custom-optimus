@@ -32,8 +32,6 @@ Well, at first I though optimus-manager was THE way for Arch laptops, but I didn
 #### Disadvantages:
 <ul>
 
-<li>The script needs to be ran from a TTY environment</li>
-
 <li>Starting an app, while having switched to the dGPU, will default to the iGPU (run with: prime-run app_name to use the dGPU)</li>
 
 <li>Modification to the script may be required before it can work properly</li>
