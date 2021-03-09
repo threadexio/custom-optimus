@@ -3,15 +3,20 @@
 confpath='/etc/optimus'
 servicepath='/etc/systemd/system'
 
-if [[ $EUID != '0' ]]; then
+if [[ "$EUID" != "0" ]]; then
 	echo "Run $0 with root permissions to continue"
 	exit 1
 fi
 
-displaymng=$(basename $(readlink $servicepath/display-manager.service) .service)
+displaymng="$(basename "$(readlink $servicepath/display-manager.service)" .service)"
 
-printf "\nThis installer will:\n\tAdd a service in systemd\n\tCreate a config file in $confpath\n\tCopy optimus.sh to /usr/bin/optimus\n\nContinue? [Y/n] "
-read a
+printf "\nThis installer will:\n\tAdd a service in systemd\n\tCreate a config file in %s\n\tCopy optimus.sh to /usr/bin/optimus\n\nContinue? [Y/n] " $confpath
+read -r a
+
+if [[ "$a" == "n" || "$a" == "N" ]]; then
+	echo 'Exiting...'
+	exit
+fi
 
 cat << EOF > files/optimus.conf
 ##

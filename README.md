@@ -92,7 +92,7 @@ Well, at first I though optimus-manager was THE way for Arch laptops, but I didn
 <ul>
 
 <li>Tested on a Lenovo Legion Y-720</li>
-<li>Linux 5.11.1-arch1-1 #1 SMP PREEMPT Tue, 23 Feb 2021 14:05:30 +0000 x86_64 GNU/Linux</li>
+<li>Linux archlunix 5.11.1-arch1-1 #1 SMP PREEMPT Tue, 23 Feb 2021 14:05:30 +0000 x86_64 GNU/Linux</li>
 <li>Nvidia Driver version: <code>460.56</code></li>
 <li>WM: dwm 6.2</li>
 <li>Display Manager: SDDM w/ default config</li>

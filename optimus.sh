@@ -17,7 +17,7 @@ else
 fi
 
 # Indicates if the script is currently running as a daemon
-: ${daemon:=false}
+: "${daemon:=false}"
 
 # Command to daemonize the script
 daemonize="env -i --block-signal=SIGHUP --block-signal=SIGTERM daemon=true $0 $@"
@@ -30,18 +30,18 @@ if [[ $daemon == "true" ]]; then
 	if [[ $1 == 'igpu' ]]; then
 
 		# Gracefully stop X11
-		loginctl terminate-session $session
+		loginctl terminate-session "$session"
 		sleep 2
-		systemctl stop $displaymng
+		systemctl stop "$displaymng"
 		sleep 1
 
 		# Remove the X11 config file
 		# that loads the nvidia drivers
-		rm $X11conf
+		rm "$X11conf"
 
 		# Add a file in /etc/modprobe.d so the
 		# nvidia drivers don't load on boot
-		cat << EOF | tee $modprobeconf
+		cat << EOF > "$modprobeconf"
 # Automatically added
 #######################
 # DO NOT EDIT BY HAND #
@@ -68,7 +68,7 @@ EOF
 		systemctl enable optimus.service
 
 		# Start X11
-		systemctl start $displaymng
+		systemctl start "$displaymng"
 
 		clear
 		exit 0
@@ -76,14 +76,14 @@ EOF
 	elif [[ $1 == 'dgpu' ]]; then
 
 		# Gracefully stop X11
-		loginctl terminate-session $session
+		loginctl terminate-session "$session"
 		sleep 2
-		systemctl stop $displaymng
+		systemctl stop "$displaymng"
 		sleep 1
 
 		# Add an X11 config file that loads
 		# the nvidia drivers on X11 start
-		cat << EOF | tee $X11conf
+		cat << EOF > "$X11conf"
 # Automatically added
 
 Section "Device"
@@ -93,7 +93,7 @@ EndSection
 EOF
 
 		# Autoload the nvidia drivers on boot
-		cat << EOF | tee $modprobeconf
+		cat << EOF > "$modprobeconf"
 # Automatically added
 # Add more options for the drivers here
 
@@ -116,7 +116,7 @@ EOF
 		systemctl disable optimus.service
 
 		# Start X11
-		systemctl start $displaymng
+		systemctl start "$displaymng"
 
 		clear
 		exit 0
