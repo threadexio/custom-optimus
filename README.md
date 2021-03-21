@@ -1,5 +1,9 @@
 # Custom Optimus
 
+![shell-script](https://img.shields.io/badge/Shell_Script-121011?style=for-the-badge&logo=gnu-bash&logoColor=white)
+<br>
+[![made-with-bash](https://img.shields.io/badge/Made%20with-Bash-1f425f.svg)](https://www.gnu.org/software/bash/)
+
 ## What is this?
 
 This is a shell script I made to switch between the iGPU and the dGPU on optimus-enabled laptops. It resembles optimus-manager, but it has some key diffirences.
