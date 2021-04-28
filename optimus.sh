@@ -30,7 +30,7 @@ x11_exit() {
 	session=$(loginctl --no-legend | awk '$5 == "" {print $1}')
 	loginctl terminate-session "$session"
 	sleep 2
-	systemctl stop "$displaymng"
+	systemctl stop display-manager
 	sleep 1
 }
 
@@ -38,11 +38,9 @@ x11_exit() {
 unload_drivers() {
 	# Continue running until all modules
 	# with nvidia in their name are unloaded
-	m=$(lsmod | awk '{print $1}' | grep nvidia)
-	echo $m
 	while [[ "$(lsmod | grep nvidia)" ]]; do
+		m=$(lsmod | awk '{print $1}' | grep nvidia)
 		for i in $m; do
-			echo "Removing $i"
 			modprobe -r $i
 		done
 		sleep 1
@@ -53,13 +51,9 @@ unload_drivers() {
 # Used to load drivers
 # $1 - specify parameters to the nvidia driver
 load_drivers() {
-	#while [[ ! "$(lsmod | awk '{print $1}' | grep nvidia)"  ]]; do
-		modprobe nvidia_drm
-		modprobe nvidia_modeset
-		modprobe nvidia $1
-	#	sleep 1
-	#done
-	#sleep 1
+	modprobe nvidia_drm
+	modprobe nvidia_modeset
+	modprobe nvidia $1
 }
 
 if [[ $daemon == "true" ]]; then
@@ -74,7 +68,7 @@ if [[ $daemon == "true" ]]; then
 
 		# Add a file in /etc/modprobe.d so the
 		# nvidia drivers don't load on boot
-		cp $confdir/other/load_nvidia.conf $modprobeconf
+		cp $confdir/other/blacklist_nvidia.conf $modprobeconf
 
 		# Disable the GPU on boot
 		systemctl enable optimus.service
@@ -86,7 +80,7 @@ if [[ $daemon == "true" ]]; then
 		tee /proc/acpi/bbswitch <<< OFF
 
 		# Start X11
-		systemctl start "$displaymng"
+		systemctl start display-manager
 
 		exit 0
 
@@ -112,9 +106,8 @@ if [[ $daemon == "true" ]]; then
 		load_drivers "NVreg_DynamicPowerManagement=0x02"
 
 		# Start X11
-		systemctl start "$displaymng"
+		systemctl start display-manager
 
-		clear
 		exit 0
 	fi
 

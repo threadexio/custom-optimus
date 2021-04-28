@@ -12,8 +12,6 @@ print_center() {
 	printf "%*s\n" $(((${#1}+$(tput cols))/2)) "$1"
 }
 
-displaymng="$(basename "$(readlink $servicepath/display-manager.service)" .service)"
-
 echo -e "\nThis installer will:"
 echo -e "\tAdd a service in systemd"
 echo -e "\tCreate a config file in $confpath"
@@ -34,12 +32,6 @@ cat << EOF > $confpath/optimus.conf
 ##	Optimus Configuration file, generated on $(date)
 ##	https://github.com/threadexio/custom-optimus
 ##
-
-## This is the name of the display manager
-## you chose during the installation
-## If for any reason you have switched display
-## managers, change this aswell
-displaymng='$displaymng'
 
 ## This is the file that holds the configuration
 ## for the nvidia card. Usually you don't have to
