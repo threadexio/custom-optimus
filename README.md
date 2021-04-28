@@ -3,10 +3,6 @@
 ![GitHub](https://img.shields.io/github/license/threadexio/custom-optimus?style=for-the-badge)
 ![NVIDIA](https://img.shields.io/badge/NVIDIA-OPTIMUS-green?style=for-the-badge&logo=nvidia)
 
-**NOTE:**   With the new 465 drivers this script seems to not work,
-            I am trying to find a way to make it work but something
-            in the drivers has changed
-
 ## What is this?
 
 This is a shell script I made to switch between the iGPU and the dGPU on optimus-enabled laptops. It resembles optimus-manager, but it has some key diffirences.
