@@ -1,8 +1,11 @@
 # Custom Optimus
 
-![shell-script](https://img.shields.io/badge/Shell_Script-121011?style=for-the-badge&logo=gnu-bash&logoColor=white)
-<br>
-[![made-with-bash](https://img.shields.io/badge/Made%20with-Bash-1f425f.svg)](https://www.gnu.org/software/bash/)
+![GitHub](https://img.shields.io/github/license/threadexio/custom-optimus?style=for-the-badge)
+![NVIDIA](https://img.shields.io/badge/NVIDIA-OPTIMUS-green?style=for-the-badge&logo=nvidia)
+
+**NOTE:**   With the new 465 drivers this script seems to not work,
+            I am trying to find a way to make it work but something
+            in the drivers has changed
 
 ## What is this?
 
@@ -38,7 +41,7 @@ Well, at first I though optimus-manager was THE way for Arch laptops, but I didn
 
 <li>Starting an app, while having switched to the dGPU, will default to the iGPU (run with: prime-run app_name to use the dGPU)</li>
 
-<li>Modification to the script may be required before it can work properly</li>
+<li>Modification to some configs may be required before it can work properly</li>
 
 <li>It's not as tested, it has more bugs (these will get fixed)</li>
 
@@ -61,17 +64,9 @@ Well, at first I though optimus-manager was THE way for Arch laptops, but I didn
 
 <li>Clone this repository somewhere on your system, doesn't really matter where... just make sure you remember the location (not in /tmp)</li>
 
-<pre><code>git clone https://github.com/threadexio/custom-optimus</code></pre>
+<pre><code>git clone https://github.com/threadexio/custom-optimus custom-optimus && cd custom-optimus</code></pre>
 
 <li>Run the <code>install.sh</code> script and it will guide you</li>
-
-<li>Edit parts of the <code>optimus.sh</code> script to fit your hardware and config</li>
-
-<ul>
-
-<li>Line 69 (nice): This is the configuration for X11 to know how to use the dGPU, you may have to change this</li>
-
-</ul>
 
 <li>After completing all that, do a quick reboot to ensure everything is loaded and ready to go.</li>
 
@@ -81,24 +76,13 @@ Well, at first I though optimus-manager was THE way for Arch laptops, but I didn
 
 **NOTE:** Before switching the GPU, save all of your work because although you don't have to reboot, restarting X also kills the current session along with the open apps
 
-## Known issues:
-<ul>
-
-<li>Graphical artifacts in X11:</li>
-<pre>If you encounter any of these, including black bars, weird shapes and more, just switch to the any TTY with Ctrl + Alt + F1-12 and restart your display manager</pre>
-
-<li>Desktop Effects not working:</li>
-<pre>Desktop effects might get disabled when switching GPUs, if that happens just restart your compositor (it worked for me in Plasma w/ OpenGL 2.0)</pre>
-
-</ul>
-
 ## Some more notes
 <ul>
 
 <li>Tested on a Lenovo Legion Y-720</li>
-<li>Linux archlunix 5.11.8-arch1-1 #1 SMP PREEMPT Sun, 21 Mar 2021 01:55:51 +0000 x86_64 GNU/Linux</li>
-<li>Nvidia Driver version: <code>460.67-2</code></li>
-<li>WM: dwm 6.2</li>
+<li>Linux archlunix 5.11.15-arch1-2 #1 SMP PREEMPT Sat, 17 Apr 2021 00:22:30 +0000 x86_64 GNU/Linux</li>
+<li>Nvidia Driver version: <code>465.24.02-3</code></li>
+<li>WM: i3</li>
 <li>Display Manager: LightDM</li>
 
 </ul>

@@ -1,6 +1,6 @@
 #!/usr/bin/bash
 
-confpath='CONFIGURATION_PATH'
+confpath="/etc/optimus/optimus.conf"
 
 if [[ $EUID != '0' ]]; then
 	echo "Run $0 with root permissions to continue"
@@ -19,9 +19,10 @@ fi
 systemctl disable optimus.service
 
 # Remove all related files
-rm -f $X11conf
 rm -f $servicepath/optimus.service
+rm -f $X11conf
 rm -f $modprobeconf
 rm -f /usr/bin/optimus
+rm -drf $(dirname $confpath)
 
-echo "Uninstalled!"
+echo "Done!"

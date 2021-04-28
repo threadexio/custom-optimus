@@ -1,24 +1,35 @@
 #!/usr/bin/bash
 
-confpath='/etc/optimus'
-servicepath='/etc/systemd/system'
+confpath="/etc/optimus"
+servicepath="/etc/systemd/system"
 
 if [[ "$EUID" != "0" ]]; then
 	echo "Run $0 with root permissions to continue"
 	exit 1
 fi
 
+print_center() {
+	printf "%*s\n" $(((${#1}+$(tput cols))/2)) "$1"
+}
+
 displaymng="$(basename "$(readlink $servicepath/display-manager.service)" .service)"
 
-printf "\nThis installer will:\n\tAdd a service in systemd\n\tCreate a config file in %s\n\tCopy optimus.sh to /usr/bin/optimus\n\nContinue? [Y/n] " $confpath
-read -r a
-
-if [[ "$a" == "n" || "$a" == "N" ]]; then
-	echo 'Exiting...'
-	exit
+echo -e "\nThis installer will:"
+echo -e "\tAdd a service in systemd"
+echo -e "\tCreate a config file in $confpath"
+echo -e "\tCopy optimus.sh to /usr/bin/optimus"
+read -n 1 -r -p "Continue [Y/n]? "
+if [[ ! "$REPLY" =~ ^[Yy]$ ]]; then
+	echo -e "\nExiting..."
+	exit 1
 fi
 
-cat << EOF > files/optimus.conf
+echo ""
+
+# Make the config directory
+mkdir -p $confpath/other
+
+cat << EOF > $confpath/optimus.conf
 ##
 ##	Optimus Configuration file, generated on $(date)
 ##	https://github.com/threadexio/custom-optimus
@@ -42,6 +53,7 @@ X11conf='/etc/X11/xorg.conf.d/10-nvidia.conf'
 ##
 
 ## The location where systemd keeps services
+## DO NOT CHANGE AFTER INSTALL!!!
 servicepath='$servicepath'
 
 ## This is the file that tells the Linux kernel
@@ -52,28 +64,24 @@ modprobeconf='/etc/modprobe.d/nvidia-optimus.conf'
 
 EOF
 
-# Copy the config
-mkdir -p $confpath
-cp files/optimus.conf $confpath
-sed -i "s%CONFIGURATION_PATH%$confpath/optimus.conf%g" optimus.sh
-sed -i "s%CONFIGURATION_PATH%$confpath/optimus.conf%g" uninstall.sh
+# Copy other config files
+install -Dm644 files/blacklist_nvidia.conf $confpath/other/blacklist_nvidia.conf
+install -Dm644 files/load_nvidia.conf $confpath/other/load_nvidia.conf
+install -Dm644 files/X11.conf $confpath/other/X11.conf
 
-# Copy the service
-cp files/optimus.service $servicepath/optimus.service
+# Install the service
+install -Dm644 files/optimus.service $servicepath/optimus.service
 
-# Copy the executable
-cp optimus.sh /usr/bin/optimus
-
-# Fix the permissions
-chown root:root $servicepath/optimus.service
-chown 644 $servicepath/optimus.service
-chown root:root $confpath/optimus.conf
-chown 644 $confpath/optimus.conf
-chown root:root /usr/bin/optimus
-chown 754 /usr/bin/optimus
+# Install the executable
+install -Dm755 optimus.sh /usr/bin/optimus
 
 # Set bbswitch to load on boot
 tee /etc/modules-load.d/bbswitch.conf <<< 'bbswitch' &>/dev/null
-echo "-----------------------------------------------------------------------------------------------------"
-echo "Installation finished! A reboot is recommended just to make sure, sorry for that..."
-echo "-----------------------------------------------------------------------------------------------------"
+
+# Make systemd recognize the added service
+systemctl daemon-reload
+
+printf '=%.0s' $(seq 1 $(tput cols))
+print_center "Installation finished! A quick reboot is recommended"
+print_center "You can uninstall this script by running uninstall.sh"
+printf '=%.0s' $(seq 1 $(tput cols))

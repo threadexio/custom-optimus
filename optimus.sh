@@ -1,6 +1,7 @@
 #!/usr/bin/bash
 
-confpath='CONFIGURATION_PATH'
+confpath="/etc/optimus/optimus.conf"
+confdir="$(dirname $confpath)"
 
 # Check if we are running as root
 if [[ $EUID != '0' ]]; then
@@ -13,27 +14,59 @@ if [[ -f $confpath ]]; then
 	source $confpath
 else
 	echo "Could not find the config file at $confpath. Getting a new config file from the installer will fix this problem"
-	exit 3
+	exit 1
 fi
 
 # Indicates if the script is currently running as a daemon
 : "${daemon:=false}"
 
 # Command to daemonize the script
+# basically detach it, so it doesn't
+# get killed by X11
 daemonize="env -i --block-signal=SIGHUP --block-signal=SIGTERM daemon=true $0 $@"
+
+# Stop X11 gracefully
+x11_exit() {
+	session=$(loginctl --no-legend | awk '$5 == "" {print $1}')
+	loginctl terminate-session "$session"
+	sleep 2
+	systemctl stop "$displaymng"
+	sleep 1
+}
+
+# Used to unload drivers
+unload_drivers() {
+	# Continue running until all modules
+	# with nvidia in their name are unloaded
+	m=$(lsmod | awk '{print $1}' | grep nvidia)
+	echo $m
+	while [[ "$(lsmod | grep nvidia)" ]]; do
+		for i in $m; do
+			echo "Removing $i"
+			modprobe -r $i
+		done
+		sleep 1
+	done
+	sleep 1
+}
+
+# Used to load drivers
+# $1 - specify parameters to the nvidia driver
+load_drivers() {
+	#while [[ ! "$(lsmod | awk '{print $1}' | grep nvidia)"  ]]; do
+		modprobe nvidia_drm
+		modprobe nvidia_modeset
+		modprobe nvidia $1
+	#	sleep 1
+	#done
+	#sleep 1
+}
 
 if [[ $daemon == "true" ]]; then
 
-	# Get the session ID from loginctl
-	session=$(loginctl | awk '$NR > 3 && $5 == "" {print $1}')
-
 	if [[ $1 == 'igpu' ]]; then
 
-		# Gracefully stop X11
-		loginctl terminate-session "$session"
-		sleep 2
-		systemctl stop "$displaymng"
-		sleep 1
+		x11_exit
 
 		# Remove the X11 config file
 		# that loads the nvidia drivers
@@ -41,79 +74,42 @@ if [[ $daemon == "true" ]]; then
 
 		# Add a file in /etc/modprobe.d so the
 		# nvidia drivers don't load on boot
-		cat << EOF > "$modprobeconf"
-# Automatically added
-#######################
-# DO NOT EDIT BY HAND #
-#######################
-
-blacklist nvidia
-blacklist nvidia_modeset
-blacklist nvidia_drm
-EOF
-
-		# Unload the nvidia drivers
-		while [[ ! -z "$(lsmod | grep nvidia)" ]]; do
-			modprobe -r nvidia_drm
-			modprobe -r nvidia_modeset
-			modprobe -r nvidia
-			sleep 1
-		done
-
-
-		# Power off the card
-		tee /proc/acpi/bbswitch <<< OFF
+		cp $confdir/other/load_nvidia.conf $modprobeconf
 
 		# Disable the GPU on boot
 		systemctl enable optimus.service
 
+		# Unload the nvidia drivers
+		unload_drivers
+
+		# Power off the card
+		tee /proc/acpi/bbswitch <<< OFF
+
 		# Start X11
 		systemctl start "$displaymng"
 
-		clear
 		exit 0
 
 	elif [[ $1 == 'dgpu' ]]; then
 
-		# Gracefully stop X11
-		loginctl terminate-session "$session"
-		sleep 2
-		systemctl stop "$displaymng"
-		sleep 1
+		x11_exit
 
 		# Add an X11 config file that loads
 		# the nvidia drivers on X11 start
-		cat << EOF > "$X11conf"
-# Automatically added
-
-Section "Device"
-  Identifier "dGPU"
-  Driver "nvidia"
-EndSection
-EOF
+		cp $confdir/other/X11.conf $X11conf
 
 		# Autoload the nvidia drivers on boot
-		cat << EOF > "$modprobeconf"
-# Automatically added
-# Add more options for the drivers here
+		cp $confdir/other/load_nvidia.conf $modprobeconf
 
-options nvidia "NVreg_DynamicPowerManagement=0x02"
-EOF
+		# Don't disable the GPU on boot
+		systemctl disable optimus.service
 
 		# Power on the card
 		tee /proc/acpi/bbswitch <<< ON
 		sleep 1
 
 		# Load the drivers
-		while [[ -z "$(lsmod | grep nvidia)" ]]; do
-			modprobe nvidia_drm
-			modprobe nvidia_modeset
-			modprobe nvidia
-			sleep 1
-		done
-
-		# Don't disable the GPU on boot
-		systemctl disable optimus.service
+		load_drivers "NVreg_DynamicPowerManagement=0x02"
 
 		# Start X11
 		systemctl start "$displaymng"
@@ -125,13 +121,9 @@ EOF
 else
 
 	if [[ $1 == "igpu" ]]; then
-
 		$daemonize
-
 	elif [[ $1 == "dgpu" ]]; then
-
 		$daemonize
-
 	else
 		echo "Usage: $0 [igpu/dgpu]"
 		echo ""
