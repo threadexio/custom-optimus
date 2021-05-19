@@ -94,6 +94,7 @@ if [[ $daemon == "true" ]]; then
 
 		# Autoload the nvidia drivers on boot
 		cp $confdir/other/load_nvidia.conf $modprobeconf
+		cp $confdir/other/nvidia_modules.conf 
 
 		# Don't disable the GPU on boot
 		systemctl disable optimus.service

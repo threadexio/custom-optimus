@@ -54,12 +54,18 @@ servicepath='$servicepath'
 ## Change this ONLY if you know what you're doing
 modprobeconf='/etc/modprobe.d/nvidia-optimus.conf'
 
+## This is the file that tells the Linux kernel
+## to load the modules described on boot
+## Should be in /etc/modules-load.d
+modulesloadconf='/etc/modules-load.d'
+
 EOF
 
 # Copy other config files
 install -Dm644 files/blacklist_nvidia.conf $confpath/other/blacklist_nvidia.conf
 install -Dm644 files/load_nvidia.conf $confpath/other/load_nvidia.conf
 install -Dm644 files/X11.conf $confpath/other/X11.conf
+install -Dm644 files/nvidia_modules.conf $confpath/other/nvidia_modules.conf
 
 # Install the service
 install -Dm644 files/optimus.service $servicepath/optimus.service
