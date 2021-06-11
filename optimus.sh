@@ -1,17 +1,19 @@
 #!/usr/bin/bash
 
-confpath="/etc/optimus/optimus.conf"
-confdir="$(dirname $confpath)"
+confdir="/etc/optimus"
+confpath="$confdir/optimus.conf"
 
 # Check if we are running as root
-if [[ $EUID != '0' ]]; then
-	echo "Run $0 with root permissions to continue"
-	exit 1
-fi
+root_needed() {
+	if [ "$EUID" != '0' ]; then
+		echo "Run $0 with root permissions to continue"
+		exit 1
+	fi
+}
 
 # Check if the config file is present
-if [[ -f $confpath ]]; then
-	source $confpath
+if [ -f "$confpath" ]; then
+	source "$confpath"
 else
 	echo "Could not find the config file at $confpath. Getting a new config file from the installer will fix this problem"
 	exit 1
@@ -27,9 +29,6 @@ daemonize="env -i --block-signal=SIGHUP --block-signal=SIGTERM daemon=true $0 $@
 
 # Stop X11 gracefully
 x11_exit() {
-	session=$(loginctl --no-legend | awk '$5 == "" {print $1}')
-	loginctl terminate-session "$session"
-	sleep 2
 	systemctl stop display-manager
 	sleep 1
 }
@@ -38,10 +37,10 @@ x11_exit() {
 unload_drivers() {
 	# Continue running until all modules
 	# with nvidia in their name are unloaded
-	while [[ "$(lsmod | grep nvidia)" ]]; do
+	while lsmod | grep -q "nvidia"; do
 		m=$(lsmod | awk '{print $1}' | grep nvidia)
 		for i in $m; do
-			modprobe -r $i
+			modprobe -r "$i"
 		done
 		sleep 1
 	done
@@ -53,12 +52,21 @@ unload_drivers() {
 load_drivers() {
 	modprobe nvidia_drm
 	modprobe nvidia_modeset
-	modprobe nvidia $1
+	modprobe nvidia "$1"
 }
 
-if [[ $daemon == "true" ]]; then
+set_card_state() {
+	if [ "$1" == "ON" ] || [ "$1" == "OFF" ]; then
+		tee /proc/acpi/bbswitch <<<"$1"
+		sleep 1
+	else
+		echo "Invalid card state: $1"
+	fi
+}
 
-	if [[ $1 == 'igpu' ]]; then
+if [ "$daemon" == "true" ]; then
+
+	if [ "$1" == 'igpu' ]; then
 
 		x11_exit
 
@@ -68,7 +76,7 @@ if [[ $daemon == "true" ]]; then
 
 		# Add a file in /etc/modprobe.d so the
 		# nvidia drivers don't load on boot
-		cp $confdir/other/blacklist_nvidia.conf $modprobeconf
+		cp "$confdir/other/blacklist_nvidia.conf" "$modprobeconf"
 
 		# Disable the GPU on boot
 		systemctl enable optimus.service
@@ -77,7 +85,7 @@ if [[ $daemon == "true" ]]; then
 		unload_drivers
 
 		# Power off the card
-		tee /proc/acpi/bbswitch <<< OFF
+		set_card_state OFF
 
 		# Start X11
 		systemctl start display-manager
@@ -90,18 +98,17 @@ if [[ $daemon == "true" ]]; then
 
 		# Add an X11 config file that loads
 		# the nvidia drivers on X11 start
-		cp $confdir/other/X11.conf $X11conf
+		cp "$confdir/other/X11.conf" "$X11conf"
 
 		# Autoload the nvidia drivers on boot
-		cp $confdir/other/load_nvidia.conf $modprobeconf
-		cp $confdir/other/nvidia_modules.conf 
+		cp "$confdir/other/load_nvidia.conf" "$modprobeconf"
+		cp "$confdir/other/nvidia_modules.conf" "$modulesloadconf"
 
 		# Don't disable the GPU on boot
 		systemctl disable optimus.service
 
 		# Power on the card
-		tee /proc/acpi/bbswitch <<< ON
-		sleep 1
+		set_card_state ON
 
 		# Load the drivers
 		load_drivers "NVreg_DynamicPowerManagement=0x02"
@@ -114,15 +121,22 @@ if [[ $daemon == "true" ]]; then
 
 else
 
-	if [[ $1 == "igpu" ]]; then
+	if [ "$1" == "igpu" ] || [ "$1" == "dgpu" ]; then
+		root_needed
 		$daemonize
-	elif [[ $1 == "dgpu" ]]; then
-		$daemonize
+	elif [ "$1" == "state" ]; then
+		if lsmod | grep -q "nvidia"; then
+			echo 1
+		else
+			echo 0
+		fi
+		exit 0
 	else
 		echo "Usage: $0 [igpu/dgpu]"
 		echo ""
-		echo "igpu | Turn off the discrete GPU"
-		echo "dgpu | Turn on the discrete GPU"
+		echo "igpu	| Turn off the discrete GPU"
+		echo "dgpu	| Turn on the discrete GPU"
+		echo "state	| Get state of discrete GPU (0 = OFF, 1 = ON)"
 		exit 0
 	fi
 

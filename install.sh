@@ -14,8 +14,9 @@ print_center() {
 
 echo -e "\nThis installer will:"
 echo -e "\tAdd a service in systemd"
-echo -e "\tCreate a config file in $confpath"
+echo -e "\tCreate a config files in $confpath"
 echo -e "\tCopy optimus.sh to /usr/bin/optimus"
+echo -e "\tCopy run-gpu.sh to /usr/bin/run-gpu"
 read -n 1 -r -p "Continue [Y/n]? "
 if [[ ! "$REPLY" =~ ^[Yy]$ ]]; then
 	echo -e "\nExiting..."
@@ -70,8 +71,9 @@ install -Dm644 files/nvidia_modules.conf $confpath/other/nvidia_modules.conf
 # Install the service
 install -Dm644 files/optimus.service $servicepath/optimus.service
 
-# Install the executable
+# Install the executables
 install -Dm755 optimus.sh /usr/bin/optimus
+install -Dm755 run-gpu.sh /usr/bin/run-gpu
 
 # Set bbswitch to load on boot
 tee /etc/modules-load.d/bbswitch.conf <<< 'bbswitch' &>/dev/null
@@ -79,7 +81,7 @@ tee /etc/modules-load.d/bbswitch.conf <<< 'bbswitch' &>/dev/null
 # Make systemd recognize the added service
 systemctl daemon-reload
 
-printf '=%.0s' $(seq 1 $(tput cols))
+printf '=%.0s' $(seq 1 "$(tput cols)")
 print_center "Installation finished! A quick reboot is recommended"
 print_center "You can uninstall this script by running uninstall.sh"
-printf '=%.0s' $(seq 1 $(tput cols))
+printf '=%.0s' $(seq 1 "$(tput cols)")
