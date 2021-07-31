@@ -77,9 +77,9 @@ git clone https://github.com/threadexio/custom-optimus custom-optimus && cd cust
 
 Tested on:
 
--   Linux archlunix 5.12.9-arch1-1 #1 SMP PREEMPT Thu, 03 Jun 2021 11:36:13 +0000 x86_64 GNU/Linux
--   Nvidia Driver version: `465.31-7`
--   WM: i3
--   Display Manager: LightDM
+-   Linux archlunix 5.13.5-arch1-1 #1 SMP PREEMPT Sun, 25 Jul 2021 18:02:58 +0000 x86_64 GNU/Linux
+-   Nvidia Driver version: `470.57.02-5`
+-   WM: `i3`
+-   Display Manager: `LightDM`
 
 To end this super long README, I want to clarify that I have not tested this on other hardware, your experiences and configs may and probably will vary from mine.

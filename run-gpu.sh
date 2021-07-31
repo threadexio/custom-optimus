@@ -1,7 +1,7 @@
 #!/usr/bin/bash
 
 if [ "$(/usr/bin/optimus state)" -eq 1 ]; then
-	prime-run $*
+	exec prime-run $*
 else
-	$*
+	exec $*
 fi
