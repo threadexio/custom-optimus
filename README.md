@@ -71,6 +71,11 @@ git clone https://github.com/threadexio/custom-optimus custom-optimus && cd cust
 	run-gpu %command%
 	```
 
+	Or if you don't like VSYNC:
+	```bash
+	NO_VSYNC=1 run-gpu %command%
+	```
+
 **NOTE:** Before switching the GPU, save all of your work because although you don't have to reboot, restarting X also kills the current session along with the open apps
 
 ## Some more notes
