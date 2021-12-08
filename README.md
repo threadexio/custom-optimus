@@ -40,11 +40,11 @@ Well, at first I though optimus-manager was THE way for Arch laptops, but I didn
 
 1. Install the required dependencies: `sudo pacman -S bbswitch nvidia nvidia-prime`
 
-	-   Nvidia drivers (`nvidia` package)
+    - Nvidia drivers (`nvidia` package)
 
-	-   Nvidia PRIME (`nvidia-prime` package)
+    - Nvidia PRIME (`nvidia-prime` package)
 
-	-   bbswitch (`bbswitch` package)
+    - bbswitch (`bbswitch` package)
 
 2. Clone this repository somewhere on your system, doesn't really matter where... just make sure you remember the location (not in /tmp)
 
@@ -60,21 +60,23 @@ git clone https://github.com/threadexio/custom-optimus custom-optimus && cd cust
 
 6. To run any app with or without the dGPU use the included wrapper (`/usr/bin/run-gpu`) it will automatically detect if the GPU is active and use it.
 
-	You can test it by running `run-gpu glxinfo | grep "OpenGL vendor"` with the dGPU active and then without it, when running it with the GPU active it should report:
+    You can test it by running `run-gpu glxinfo | grep "OpenGL vendor"` with the dGPU active and then without it, when running it with the GPU active it should report:
 
-	```bash
-	OpenGL vendor string: NVIDIA Corporation
-	```
+    ```bash
+    OpenGL vendor string: NVIDIA Corporation
+    ```
 
-	For example, this is how launch options in steam would look:
-	```bash
-	run-gpu %command%
-	```
+    For example, this is how launch options in steam would look:
 
-	Or if you don't like VSYNC:
-	```bash
-	NO_VSYNC=1 run-gpu %command%
-	```
+    ```bash
+    run-gpu %command%
+    ```
+
+    Or if you don't like VSYNC:
+
+    ```bash
+    NO_VSYNC=1 run-gpu %command%
+    ```
 
 **NOTE:** Before switching the GPU, save all of your work because although you don't have to reboot, restarting X also kills the current session along with the open apps
 
@@ -82,8 +84,8 @@ git clone https://github.com/threadexio/custom-optimus custom-optimus && cd cust
 
 Tested on:
 
--   Linux archlunix 5.13.5-arch1-1 #1 SMP PREEMPT Sun, 25 Jul 2021 18:02:58 +0000 x86_64 GNU/Linux
--   Nvidia Driver version: `470.57.02-5`
+-   Linux archlunix 5.15.6-zen2-1-zen #1 ZEN SMP PREEMPT Thu, 02 Dec 2021 15:47:07 +0000 x86_64 GNU/Linux
+-   Nvidia Driver version: `495.44`
 -   WM: `i3`
 -   Display Manager: `LightDM`
 
